@@ -217,6 +217,10 @@ const GAL_TOTAL = 6;
 
 function initGallery() {
   galIndex = 0;
+  document.querySelectorAll('.mem-photo').forEach(img => {
+    if (img.dataset.src && !img.src) img.src = img.dataset.src;
+    if (img.complete && img.naturalWidth === 0) img.parentNode?.classList.add('placeholder');
+  });
   renderGallery();
   // build dots once
   const dotContainer = document.getElementById('galDots');
