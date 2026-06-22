@@ -273,10 +273,40 @@ function checkCode() {
 }
 
 // ─── gallery (memories) ───────────────────────────
+// Edit captions here — photo # matches assets/1.jpg, 2.jpg, etc.
+const ASSET_BASE = 'https://adamnibosh.github.io/for-sayang/assets/';
+const MEMORY_COUNT = 21;
+const MEMORIES = Array.from({ length: MEMORY_COUNT }, (_, i) => ({
+  num: i + 1,
+  src: `${ASSET_BASE}${i + 1}.jpg?v=8`,
+  caption: '---'
+}));
+
 let galIndex = 0;
-const GAL_TOTAL = 6;
+let GAL_TOTAL = MEMORIES.length;
+let galleryBuilt = false;
+
+function buildGallery() {
+  const slider = document.getElementById('gallerySlider');
+  if (!slider || galleryBuilt) return;
+
+  const icons = ['🌸', '🤍', '✨', '💕', '🌷', '🫶'];
+  slider.innerHTML = MEMORIES.map((mem, i) => `
+    <div class="mem-slide${i === 0 ? ' active-slide' : ''}"${i === 0 ? '' : ' hidden'}>
+      <p class="mem-number">#${mem.num}</p>
+      <div class="mem-photo-wrap">
+        <img src="${mem.src}" alt="memory ${mem.num}" class="mem-photo" loading="${i < 2 ? 'eager' : 'lazy'}">
+        <div class="mem-placeholder-inner">${icons[i % icons.length]}</div>
+      </div>
+      <p class="mem-caption">${mem.caption}</p>
+    </div>
+  `).join('');
+
+  galleryBuilt = true;
+}
 
 function initGallery() {
+  buildGallery();
   galIndex = 0;
   document.querySelectorAll('.mem-photo').forEach(img => {
     img.parentNode?.classList.remove('placeholder');
@@ -290,7 +320,8 @@ function initGallery() {
   renderGallery();
   // build dots once
   const dotContainer = document.getElementById('galDots');
-  if (dotContainer && dotContainer.children.length === 0) {
+  if (dotContainer) {
+    dotContainer.innerHTML = '';
     for (let i = 0; i < GAL_TOTAL; i++) {
       const d = document.createElement('span');
       d.className = 'gal-dot' + (i === 0 ? ' active' : '');
