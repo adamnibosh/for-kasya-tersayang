@@ -40,7 +40,6 @@ const MESSAGES = [
 // Adam's birthday: 14 June → 1406
 const PASSCODE = '1406';
 
-function initApp() {
 // ─── screen navigation ───────────────────────────
 const GIFT_SCREENS = new Set(['letter', 'memories', 'messages']);
 const visited = new Set();
@@ -57,9 +56,19 @@ function markVisited(name) {
 }
 
 function goTo(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.hidden = true;
+    s.setAttribute('inert', '');
+  });
+
   const t = document.getElementById('screen-' + name);
-  if (t) t.classList.add('active');
+  if (t) {
+    t.hidden = false;
+    t.removeAttribute('inert');
+    t.classList.add('active');
+  }
+
   if (name === 'lock') {
     resetKeypad();
     visited.clear();
@@ -69,28 +78,45 @@ function goTo(name) {
   }
   if (name === 'memories') initGallery();
   if (name === 'messages') initMessages();
-  if (name === 'finale')   startHeartRain();
-  // burst confetti when entering a gift screen
+  if (name === 'finale') startHeartRain();
   if (GIFT_SCREENS.has(name)) burstConfetti();
 }
 
-// ── data-goto buttons (navigation only, no visit tracking) ──
-document.querySelectorAll('[data-goto]').forEach(el => {
-  el.addEventListener('click', e => {
-    spawnRipple(el, e);
-    setTimeout(() => goTo(el.dataset.goto), 140);
-  });
-});
+let suppressClick = false;
 
-// ── data-done buttons (mark gift complete → back to picker) ──
-document.querySelectorAll('[data-done]').forEach(el => {
-  el.addEventListener('click', e => {
-    spawnRipple(el, e);
-    const gift = el.dataset.done;
-    markVisited(gift);
-    setTimeout(() => goTo('gift'), 140);
-  });
-});
+function handleTap(e) {
+  if (e.type === 'click' && suppressClick) return;
+  if (e.type === 'touchend') {
+    suppressClick = true;
+    setTimeout(() => { suppressClick = false; }, 450);
+  }
+
+  const gotoBtn = e.target.closest('[data-goto]');
+  if (gotoBtn) {
+    e.preventDefault();
+    spawnRipple(gotoBtn, e);
+    setTimeout(() => goTo(gotoBtn.dataset.goto), 120);
+    return;
+  }
+
+  const doneBtn = e.target.closest('[data-done]');
+  if (doneBtn) {
+    e.preventDefault();
+    spawnRipple(doneBtn, e);
+    markVisited(doneBtn.dataset.done);
+    setTimeout(() => goTo('gift'), 120);
+    return;
+  }
+
+  const key = e.target.closest('#keypad .key');
+  if (key) {
+    e.preventDefault();
+    handleKeyPress(key, e);
+  }
+}
+
+document.getElementById('screenStack')?.addEventListener('click', handleTap);
+document.getElementById('screenStack')?.addEventListener('touchend', handleTap, { passive: false });
 
 // ─── ripple ──────────────────────────────────────
 function spawnRipple(el, evt) {
@@ -148,35 +174,33 @@ function spawnHeartBurst() {
   });
 }
 
-document.querySelectorAll('#keypad .key').forEach(key => {
-  key.addEventListener('click', e => {
-    spawnRipple(key, e);
-    const k = key.dataset.key;
+function handleKeyPress(key, e) {
+  spawnRipple(key, e);
+  const k = key.dataset.key;
 
-    if (k === 'back') {
-      if (entered.length > 0) {
-        entered = entered.slice(0, -1);
-        heartSlots[entered.length].textContent = '🤍';
-        heartSlots[entered.length].classList.remove('filled');
-        wrongMsg.classList.remove('show');
-      }
-      return;
+  if (k === 'back') {
+    if (entered.length > 0) {
+      entered = entered.slice(0, -1);
+      heartSlots[entered.length].textContent = '🤍';
+      heartSlots[entered.length].classList.remove('filled');
+      wrongMsg.classList.remove('show');
     }
+    return;
+  }
 
-    if (k === 'enter') {
-      if (entered.length === 4) checkCode();
-      return;
-    }
+  if (k === 'enter') {
+    if (entered.length === 4) checkCode();
+    return;
+  }
 
-    if (entered.length < 4) {
-      heartSlots[entered.length].textContent = '❤️';
-      heartSlots[entered.length].classList.add('filled');
-      entered += k;
-    }
+  if (entered.length < 4) {
+    heartSlots[entered.length].textContent = '❤️';
+    heartSlots[entered.length].classList.add('filled');
+    entered += k;
+  }
 
-    if (entered.length === 4) setTimeout(checkCode, 260);
-  });
-});
+  if (entered.length === 4) setTimeout(checkCode, 260);
+}
 
 function checkCode() {
   if (entered === PASSCODE) {
@@ -425,20 +449,7 @@ function stopHeartRain() {
 }
 
 // stop rain when navigating away from finale
-const _origGoTo = goTo;  // keep reference
-// patch goTo to stop rain when leaving
-const goToOrig = goTo;
-window.__goTo  = goTo;
-// override via event — when "start over" is clicked, rain stops
 document.getElementById('screen-finale')?.addEventListener('click', e => {
   const btn = e.target.closest('[data-goto]');
   if (btn) stopHeartRain();
 });
-
-} // end initApp
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initApp);
-} else {
-  initApp();
-}
