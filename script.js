@@ -37,8 +37,10 @@ const MESSAGES = [
 // ╔══════════════════════════════════════════════╗
 // ║  PASSCODE                                    ║
 // ╚══════════════════════════════════════════════╝
+// Adam's birthday: 14 June → 1406
 const PASSCODE = '1406';
 
+function initApp() {
 // ─── screen navigation ───────────────────────────
 const GIFT_SCREENS = new Set(['letter', 'memories', 'messages']);
 const visited = new Set();
@@ -58,7 +60,13 @@ function goTo(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const t = document.getElementById('screen-' + name);
   if (t) t.classList.add('active');
-  if (name === 'lock')     resetKeypad();
+  if (name === 'lock') {
+    resetKeypad();
+    visited.clear();
+    document.querySelectorAll('.gift-card').forEach(c => c.classList.remove('visited'));
+    document.getElementById('finaleReveal')?.classList.remove('show');
+    stopHeartRain();
+  }
   if (name === 'memories') initGallery();
   if (name === 'messages') initMessages();
   if (name === 'finale')   startHeartRain();
@@ -426,3 +434,11 @@ document.getElementById('screen-finale')?.addEventListener('click', e => {
   const btn = e.target.closest('[data-goto]');
   if (btn) stopHeartRain();
 });
+
+} // end initApp
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}

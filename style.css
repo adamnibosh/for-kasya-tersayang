@@ -23,7 +23,7 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; font-family: var(--font-body); color: var(--brown); background: var(--cream-deep); -webkit-font-smoothing: antialiased; }
-button { font-family: inherit; cursor: pointer; border: none; background: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 
 /* ============================================
    BACKDROP
