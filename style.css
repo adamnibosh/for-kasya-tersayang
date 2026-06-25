@@ -523,7 +523,59 @@ button {
    ============================================ */
 #screen-messages { justify-content:flex-start; }
 
-.msg-card-wrap { width:100%; margin:14px 0 18px; }
+.msg-mood-picker { width:100%; margin:10px 0 16px; }
+.msg-mood-picker .subtitle { margin-bottom:14px; }
+
+.mood-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  width:100%;
+}
+.mood-btn {
+  background:var(--white);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-card);
+  padding:18px 12px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s ease;
+}
+.mood-btn:hover { transform:translateY(-3px); box-shadow:0 14px 26px rgba(74,59,48,.12); }
+.mood-btn:active { transform:scale(.96); }
+.mood-emoji { font-size:34px; line-height:1; }
+.mood-name {
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:15px;
+  color:var(--brown);
+}
+
+.msg-cards-view { width:100%; }
+.msg-mood-bar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  width:100%;
+  margin:4px 0 10px;
+}
+.msg-mood-label {
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:15px;
+  color:var(--sky-deep);
+  margin:0;
+}
+.btn-mood-change {
+  padding:8px 14px !important;
+  min-height:0 !important;
+  font-size:12px !important;
+}
+
+.msg-card-wrap { width:100%; margin:8px 0 18px; }
 
 .msg-card {
   background:var(--white); border-radius:var(--radius-md);
@@ -841,6 +893,12 @@ button {
   .gal-btn.touch-active {
     transform: scale(1.12);
     background: var(--sky);
+    transition-duration: 0.1s;
+  }
+
+  .mood-btn.touch-active {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 26px rgba(74,59,48,.12);
     transition-duration: 0.1s;
   }
 }

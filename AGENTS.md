@@ -10,3 +10,7 @@ After every `git push` to GitHub Pages:
 Use `deploy.ps1` for local deploys (Windows toast + beep + popup fallback).
 Test alerts: `powershell -File deploy.ps1 -NotifyTest`
 Agent must still confirm in chat after every push it makes.
+
+## Rewind — ayat sweett moods
+If user says **rewind** for messages: restore from `messages-original.snapshot.js`
+(single 6-card swipe, no mood picker).

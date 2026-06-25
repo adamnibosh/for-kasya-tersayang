@@ -1,32 +1,30 @@
 // ╔══════════════════════════════════════════════╗
-// ║  SWEET MESSAGES DATA — edit these!           ║
+// ║  SWEET MESSAGES — edit per mood!           ║
+// ║  Say "rewind" → see messages-original.snapshot.js
 // ╚══════════════════════════════════════════════╝
-const MESSAGES = [
-  {
-    text: "you are the kindest person i've ever known. 🌸",
-    sub: "and i mean that more than you know."
+const PLACEHOLDER_MSG = { text: '---', sub: '---' };
+const MOODS = {
+  sad: {
+    label: 'sedih',
+    emoji: '😢',
+    cards: Array.from({ length: 4 }, () => ({ ...PLACEHOLDER_MSG }))
   },
-  {
-    text: "i think about you way more than i let on. 💛",
-    sub: "like, embarrassingly often."
+  happy: {
+    label: 'happy',
+    emoji: '😊',
+    cards: Array.from({ length: 4 }, () => ({ ...PLACEHOLDER_MSG }))
   },
-  {
-    text: "being around you just makes everything feel lighter. ✨",
-    sub: "thank you for that."
+  alone: {
+    label: 'alone',
+    emoji: '🫂',
+    cards: Array.from({ length: 4 }, () => ({ ...PLACEHOLDER_MSG }))
   },
-  {
-    text: "i'm really lucky you're in my life. 🤍",
-    sub: "even on the hard days."
-  },
-  {
-    text: "you deserve all the softness the world has. 🌷",
-    sub: "i hope i can be part of that."
-  },
-  {
-    text: "i choose you. yesterday, today, always. 🐾",
-    sub: "even when i forget to show it."
+  angry: {
+    label: 'marah',
+    emoji: '😤',
+    cards: Array.from({ length: 4 }, () => ({ ...PLACEHOLDER_MSG }))
   }
-];
+};
 
 // ╔══════════════════════════════════════════════╗
 // ║  MEMORY CAPTIONS — edit these to match yours ║
@@ -147,11 +145,31 @@ function handlePointerUp(e) {
     return;
   }
 
+  const moodBtn = e.target.closest('[data-mood]');
+  if (moodBtn) {
+    e.preventDefault();
+    hapticTap();
+    spawnRipple(moodBtn, e);
+    selectMood(moodBtn.dataset.mood);
+    return;
+  }
+
+  const changeMoodBtn = e.target.closest('#msgChangeMood');
+  if (changeMoodBtn) {
+    e.preventDefault();
+    hapticTap();
+    spawnRipple(changeMoodBtn, e);
+    showMoodPicker();
+    return;
+  }
+
   const msgPrev = e.target.closest('#msgPrev');
   if (msgPrev) {
     e.preventDefault();
     hapticTap();
-    msgIndex = (msgIndex - 1 + MESSAGES.length) % MESSAGES.length;
+    const total = getActiveMessages().length;
+    if (!total) return;
+    msgIndex = (msgIndex - 1 + total) % total;
     renderMessage();
     updateMsgDots();
     return;
@@ -161,7 +179,9 @@ function handlePointerUp(e) {
   if (msgNext) {
     e.preventDefault();
     hapticTap();
-    msgIndex = (msgIndex + 1) % MESSAGES.length;
+    const total = getActiveMessages().length;
+    if (!total) return;
+    msgIndex = (msgIndex + 1) % total;
     renderMessage();
     updateMsgDots();
     return;
@@ -383,21 +403,51 @@ function updateGalDots() {
   });
 }
 
-// ─── sweet messages ───────────────────────────────
+// ─── sweet messages (mood flashcards) ─────────────
+let msgMood = null;
 let msgIndex = 0;
 
-function initMessages() {
+function getActiveMessages() {
+  return msgMood ? MOODS[msgMood]?.cards ?? [] : [];
+}
+
+function showMoodPicker() {
+  msgMood = null;
   msgIndex = 0;
+  document.getElementById('msgMoodPicker')?.removeAttribute('hidden');
+  document.getElementById('msgCardsView')?.setAttribute('hidden', '');
+}
+
+function selectMood(mood) {
+  if (!MOODS[mood]) return;
+  msgMood = mood;
+  msgIndex = 0;
+
+  document.getElementById('msgMoodPicker')?.setAttribute('hidden', '');
+  document.getElementById('msgCardsView')?.removeAttribute('hidden');
+
+  const moodData = MOODS[mood];
+  const labelEl = document.getElementById('msgMoodLabel');
+  if (labelEl) labelEl.textContent = `${moodData.emoji} ${moodData.label}`;
+
+  rebuildMsgDots();
   renderMessage(false);
-  const dotContainer = document.getElementById('msgDots');
-  if (dotContainer && dotContainer.children.length === 0) {
-    MESSAGES.forEach((_, i) => {
-      const d = document.createElement('span');
-      d.className = 'gal-dot' + (i === 0 ? ' active' : '');
-      dotContainer.appendChild(d);
-    });
-  }
   updateMsgDots();
+}
+
+function rebuildMsgDots() {
+  const dotContainer = document.getElementById('msgDots');
+  if (!dotContainer) return;
+  dotContainer.innerHTML = '';
+  getActiveMessages().forEach((_, i) => {
+    const d = document.createElement('span');
+    d.className = 'gal-dot' + (i === 0 ? ' active' : '');
+    dotContainer.appendChild(d);
+  });
+}
+
+function initMessages() {
+  showMoodPicker();
 }
 
 function renderMessage(animate = true) {
@@ -405,18 +455,19 @@ function renderMessage(animate = true) {
   const textEl  = document.getElementById('msgText');
   const subEl   = document.getElementById('msgSub');
   const numEl   = document.getElementById('msgNumber');
-  if (!card) return;
+  const messages = getActiveMessages();
+  if (!card || !messages.length) return;
 
   if (animate) {
     card.classList.remove('flip');
-    void card.offsetWidth; // reflow to restart animation
+    void card.offsetWidth;
     card.classList.add('flip');
   }
 
-  const msg = MESSAGES[msgIndex];
+  const msg = messages[msgIndex];
   textEl.textContent = msg.text;
   subEl.textContent  = msg.sub;
-  numEl.textContent  = `${msgIndex + 1} / ${MESSAGES.length}`;
+  numEl.textContent  = `${msgIndex + 1} / ${messages.length}`;
 }
 
 function updateMsgDots() {
@@ -594,7 +645,9 @@ bindSwipe(document.getElementById('gallerySlider'), 'gallery', dir => {
 });
 
 bindSwipe(document.getElementById('msgCard'), 'messages', dir => {
-  msgIndex = (msgIndex + dir + MESSAGES.length) % MESSAGES.length;
+  const total = getActiveMessages().length;
+  if (!total) return;
+  msgIndex = (msgIndex + dir + total) % total;
   renderMessage();
   updateMsgDots();
 });
@@ -602,7 +655,7 @@ bindSwipe(document.getElementById('msgCard'), 'messages', dir => {
 function initTouchFeedback() {
   if (!IS_TOUCH) return;
 
-  const SELECTORS = '.btn, .gift-card, .gal-btn, .key';
+  const SELECTORS = '.btn, .gift-card, .gal-btn, .key, .mood-btn';
   let activeEl = null;
 
   function clearTouch(el) {

@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://adamnibosh.github.io/for-kasya-tersayang/style.css?v=18">
+<link rel="stylesheet" href="https://adamnibosh.github.io/for-kasya-tersayang/style.css?v=21">
 </head>
 <body>
 
@@ -179,16 +179,44 @@
       <p class="eyebrow">things i always mean to say</p>
       <h1 class="title title-script">for you 🌸</h1>
 
-      <div class="msg-card-wrap">
-        <div class="msg-card" id="msgCard">
-          <div class="msg-number" id="msgNumber">1 / 6</div>
-          <p class="msg-text" id="msgText">loading…</p>
-          <p class="msg-sub" id="msgSub"></p>
+      <div class="msg-mood-picker" id="msgMoodPicker">
+        <p class="subtitle">how are you feeling sayang?</p>
+        <div class="mood-grid">
+          <button type="button" class="mood-btn" data-mood="sad">
+            <span class="mood-emoji">😢</span>
+            <span class="mood-name">sedih</span>
+          </button>
+          <button type="button" class="mood-btn" data-mood="happy">
+            <span class="mood-emoji">😊</span>
+            <span class="mood-name">happy</span>
+          </button>
+          <button type="button" class="mood-btn" data-mood="alone">
+            <span class="mood-emoji">🫂</span>
+            <span class="mood-name">alone</span>
+          </button>
+          <button type="button" class="mood-btn" data-mood="angry">
+            <span class="mood-emoji">😤</span>
+            <span class="mood-name">marah</span>
+          </button>
         </div>
-        <div class="msg-nav">
-          <button class="gal-btn" id="msgPrev">‹</button>
-          <div class="gal-dots" id="msgDots"></div>
-          <button class="gal-btn" id="msgNext">›</button>
+      </div>
+
+      <div class="msg-cards-view" id="msgCardsView" hidden>
+        <div class="msg-mood-bar">
+          <p class="msg-mood-label" id="msgMoodLabel"></p>
+          <button type="button" class="btn btn-ghost btn-mood-change" id="msgChangeMood">tukar mood</button>
+        </div>
+        <div class="msg-card-wrap">
+          <div class="msg-card" id="msgCard">
+            <div class="msg-number" id="msgNumber">1 / 4</div>
+            <p class="msg-text" id="msgText">loading…</p>
+            <p class="msg-sub" id="msgSub"></p>
+          </div>
+          <div class="msg-nav">
+            <button class="gal-btn" id="msgPrev" type="button" aria-label="Previous message">‹</button>
+            <div class="gal-dots" id="msgDots"></div>
+            <button class="gal-btn" id="msgNext" type="button" aria-label="Next message">›</button>
+          </div>
         </div>
       </div>
 
@@ -216,6 +244,6 @@
   </div>
 </main>
 
-<script src="https://adamnibosh.github.io/for-kasya-tersayang/script.js?v=20"></script>
+<script src="https://adamnibosh.github.io/for-kasya-tersayang/script.js?v=21"></script>
 </body>
 </html>
