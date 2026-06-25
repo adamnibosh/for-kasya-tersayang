@@ -90,6 +90,28 @@ const MOODS = {
         sub: 'not because it\'s easy — because you\'re worth it, sayang.'
       }
     ]
+  },
+  rindu: {
+    label: 'rindu',
+    emoji: '💭',
+    cards: [
+      {
+        text: 'i rinduu kamu lebih dari baby boleh cakap. 💛',
+        sub: 'hampir 2 bulan tak jumpa, but my heart still with you every day.'
+      },
+      {
+        text: 'ldr memang susah sayang, tapi you worth every single mile. 🌙',
+        sub: "i'd choose you again — even with the distance."
+      },
+      {
+        text: 'setiap malam before tidur, baby ingat muka kamu. 🤍',
+        sub: "that's my favourite part of the day — thinking of you."
+      },
+      {
+        text: 'tak lama lagi kita jumpa, sayang. hold on okee. 🫂',
+        sub: 'this distance is temporary. us is not.'
+      }
+    ]
   }
 };
 
