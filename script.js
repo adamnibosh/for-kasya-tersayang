@@ -108,7 +108,7 @@ const MOODS = {
         sub: "that's my favourite part of the day — thinking of you."
       },
       {
-        text: 'tak lama lagi kita jumpa, sayang. hold on okee. 🫂',
+        text: 'one day kita akan berjumpa juga oke sayang, sabarr tauuu 🫂',
         sub: 'this distance is temporary. us is not.'
       }
     ]
