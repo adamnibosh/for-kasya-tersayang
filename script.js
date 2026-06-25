@@ -2,27 +2,94 @@
 // ║  SWEET MESSAGES — edit per mood!           ║
 // ║  Say "rewind" → see messages-original.snapshot.js
 // ╚══════════════════════════════════════════════╝
-const PLACEHOLDER_MSG = { text: '---', sub: '---' };
 const MOODS = {
   sad: {
     label: 'sedih',
     emoji: '😢',
-    cards: Array.from({ length: 4 }, () => ({ ...PLACEHOLDER_MSG }))
+    cards: [
+      {
+        text: 'kalau sayang sedih, baby pun rasa sedih jugak. 🥺',
+        sub: "you don't have to carry it alone — i'm right here with you."
+      },
+      {
+        text: 'it\'s okay to not be okay today, sayang. 🤍',
+        sub: 'your feelings are valid. every single one of them.'
+      },
+      {
+        text: 'baby nak cakap — you matter sangat sangat to me. 💛',
+        sub: 'even on your quietest days, especially on those days.'
+      },
+      {
+        text: 'kalau dunia rasa berat, lean on me. seriously. 🫂',
+        sub: "i'm sorry for the times i made things heavier instead of lighter."
+      }
+    ]
   },
   happy: {
     label: 'happy',
     emoji: '😊',
-    cards: Array.from({ length: 4 }, () => ({ ...PLACEHOLDER_MSG }))
+    cards: [
+      {
+        text: 'nampak sayang happy, baby pun happy gila! 😊',
+        sub: 'your smile is literally my favourite notification.'
+      },
+      {
+        text: 'keep shining sayang, you deserve every good thing. ✨',
+        sub: 'the world is so much brighter when you\'re in a good mood.'
+      },
+      {
+        text: 'baby suka sangat tengok you glowing macam ni. 💛',
+        sub: 'save this feeling — you earned every bit of it.'
+      },
+      {
+        text: 'your happiness is my happiness too, always. 🌸',
+        sub: 'thank you for letting me be part of the good days.'
+      }
+    ]
   },
   alone: {
     label: 'alone',
     emoji: '🫂',
-    cards: Array.from({ length: 4 }, () => ({ ...PLACEHOLDER_MSG }))
+    cards: [
+      {
+        text: 'even bila rasa alone, you\'re not really alone. 🤍',
+        sub: 'i\'m thinking of you — right now, in this exact moment.'
+      },
+      {
+        text: 'baby faham sometimes you just need space. 🌙',
+        sub: 'but just know — my heart is still on your side, always.'
+      },
+      {
+        text: 'jauh ke dekat ke, sayang still dalam hati baby. 💛',
+        sub: 'distance doesn\'t change how much you mean to me.'
+      },
+      {
+        text: 'kalau rasa sunyi, close your eyes — i\'m there. 🫂',
+        sub: 'you\'ve never been someone i forget. not even for a second.'
+      }
+    ]
   },
   angry: {
     label: 'marah',
     emoji: '😤',
-    cards: Array.from({ length: 4 }, () => ({ ...PLACEHOLDER_MSG }))
+    cards: [
+      {
+        text: 'it\'s okay to be angry sayang. baby faham. 🤍',
+        sub: 'you don\'t have to pretend you\'re fine for my sake.'
+      },
+      {
+        text: 'kalau marah sebab i — baby minta maaf. truly. 🥺',
+        sub: 'you had every right to feel that way. no excuses from me.'
+      },
+      {
+        text: 'take your time. baby akan tunggu, no pressure. 🌸',
+        sub: 'i\'d rather you be honest than polite with me.'
+      },
+      {
+        text: 'even when you\'re upset, i still choose you. 💛',
+        sub: 'not because it\'s easy — because you\'re worth it, sayang.'
+      }
+    ]
   }
 };
 
