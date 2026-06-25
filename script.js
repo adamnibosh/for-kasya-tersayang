@@ -390,13 +390,14 @@ const CAPTIONS = {
   7: 'masani first baby dapat dating dengan kamu dekat library, even double date pun takpela janji sebelah kamu',
   8: 'tengokk tuu, comell jee kan senyuman kamu. manis jeee',
   9: 'how could i not fall in love sayang if kamu comel macmni. btw time ni kiter tukar body calculatorrrr kann',
-  11: 'lepastu malam jual jual tu kita bincang pasal project final dt'
+  11: 'lepastu malam jual jual tu kita bincang pasal project final dt',
+  12: 'tengok tuu sayang sampai stress and frust hihi comell jeee'
 };
 const MEMORIES = Array.from({ length: 21 }, (_, i) => i + 1)
   .filter(num => !EXCLUDED_PHOTOS.has(num))
   .map(num => ({
     num,
-    src: `${ASSET_BASE}${num}.jpg?v=30`,
+    src: `${ASSET_BASE}${num}.jpg?v=31`,
     caption: CAPTIONS[num] ?? '---'
   }));
 
