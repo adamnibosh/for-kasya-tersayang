@@ -78,7 +78,7 @@ const MOODS = {
         sub: 'you don\'t have to pretend you\'re fine for my sake.'
       },
       {
-        text: 'kalau marah sebab i — baby minta maaf. truly. 🥺',
+        text: 'kalau sayang marah baby, muhammad minta maaf sangat 🥺',
         sub: 'you had every right to feel that way. no excuses from me.'
       },
       {
