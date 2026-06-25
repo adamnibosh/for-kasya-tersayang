@@ -20,7 +20,7 @@ const MOODS = {
         sub: 'even on your quietest days, especially on those days.'
       },
       {
-        text: 'kalau dunia rasa berat, lean on me. seriously. 🫂',
+        text: 'if worlds heavy sangat, kamu always ada bahuu baby untuk sandar 🫂',
         sub: "i'm sorry for the times i made things heavier instead of lighter."
       }
     ]
