@@ -392,13 +392,14 @@ const CAPTIONS = {
   9: 'how could i not fall in love sayang if kamu comel macmni. btw time ni kiter tukar body calculatorrrr kann',
   11: 'lepastu malam jual jual tu kita bincang pasal project final dt',
   12: 'tengok tuu sayang sampai stress and frust hihi comell jeee',
-  13: 'but all of sudden my mood pun tibe tibe takde kan sebab tu hm'
+  13: 'but all of sudden my mood pun tibe tibe takde kan sebab tu hm',
+  14: 'then sayang decide to comfort i mcmtu, thats the moment i realise you sayang i sangat and i would love to hold your hands atas pelamin nanti'
 };
 const MEMORIES = Array.from({ length: 21 }, (_, i) => i + 1)
   .filter(num => !EXCLUDED_PHOTOS.has(num))
   .map(num => ({
     num,
-    src: `${ASSET_BASE}${num}.jpg?v=32`,
+    src: `${ASSET_BASE}${num}.jpg?v=33`,
     caption: CAPTIONS[num] ?? '---'
   }));
 
