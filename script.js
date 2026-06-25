@@ -96,8 +96,8 @@ const MOODS = {
     emoji: '💭',
     cards: [
       {
-        text: 'i rinduu kamu lebih dari baby boleh cakap. 💛',
-        sub: 'hampir 2 bulan tak jumpa, but my heart still with you every day.'
+        text: 'muhammad rindu kamu setiap hari, jam, minit and even setiap saat sayang 💛',
+        sub: 'jarak maybe kita jauh tapi hati kitaa sentiasa dekatt kann'
       },
       {
         text: 'ldr memang susah sayang, tapi you worth every single mile. 🌙',
