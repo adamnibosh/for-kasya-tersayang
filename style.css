@@ -201,6 +201,15 @@ button {
 }
 .wrong-msg.show { opacity:1; }
 
+.lock-ps {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--brown-soft);
+  margin: 14px 8px 0;
+  max-width: 280px;
+  font-style: italic;
+}
+
 .keypad {
   display:grid; grid-template-columns:repeat(3,1fr);
   gap:11px; width:100%; max-width:268px; margin-top:8px;
