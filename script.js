@@ -297,13 +297,14 @@ const EXCLUDED_PHOTOS = new Set([3, 10, 16, 18, 21]);
 const CAPTIONS = {
   1: 'ni first time kan sayang kita gamba berdua, nervous sangat masa ni',
   2: 'time ni kita malu malu lagi nak bersembang, and lama kita duduk berdua dekat situ',
-  4: 'lepastu, kita date dekat KJM Perlis tu. baby sumpa rasa best dapat spend time dengan kamu. first time juga baby dapat dating jalan jalan hm'
+  4: 'lepastu, kita date dekat KJM Perlis tu. baby sumpa rasa best dapat spend time dengan kamu. first time juga baby dapat dating jalan jalan hm',
+  5: 'time ni first baby punya blindpax and dibelanje oleh kamu'
 };
 const MEMORIES = Array.from({ length: 21 }, (_, i) => i + 1)
   .filter(num => !EXCLUDED_PHOTOS.has(num))
   .map(num => ({
     num,
-    src: `${ASSET_BASE}${num}.jpg?v=17`,
+    src: `${ASSET_BASE}${num}.jpg?v=19`,
     caption: CAPTIONS[num] ?? '---'
   }));
 
