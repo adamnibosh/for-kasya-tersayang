@@ -127,6 +127,16 @@ const MOODS = {
 // Girlfriend: 1406 (14 June) | Admin logs: 0909 on same keypad
 const PASSCODE = '1406';
 const ADMIN_PASSCODE = '0909';
+const ADMIN_AUTH_KEY = 'kasya_admin_auth';
+
+function setAdminAuth() {
+  localStorage.setItem(ADMIN_AUTH_KEY, '1');
+  document.getElementById('adminLogsLink')?.removeAttribute('hidden');
+}
+
+function isAdminAuthed() {
+  return localStorage.getItem(ADMIN_AUTH_KEY) === '1';
+}
 const IS_TOUCH = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -187,6 +197,7 @@ function goTo(name) {
   if (name === 'memories') initGallery();
   if (name === 'messages') initMessages();
   if (name === 'finale') startHeartRain();
+  if (name === 'admin') window.AdminPanel?.init();
   if (GIFT_SCREENS.has(name)) burstConfetti();
 }
 
@@ -405,8 +416,8 @@ function checkCode() {
     return;
   }
   if (entered === ADMIN_PASSCODE) {
-    sessionStorage.setItem('kasya_admin_auth', '1');
-    window.location.href = 'admin.html';
+    setAdminAuth();
+    setTimeout(() => goTo('admin'), 200);
     return;
   }
   window.KasyaAnalytics?.log('passcode_wrong');
@@ -811,6 +822,10 @@ function initTouchFeedback() {
 
   document.addEventListener('pointerup', releaseTouch, { passive: true });
   document.addEventListener('pointercancel', releaseTouch, { passive: true });
+}
+
+if (isAdminAuthed()) {
+  document.getElementById('adminLogsLink')?.removeAttribute('hidden');
 }
 
 initKeypad();

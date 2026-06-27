@@ -2,30 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
-<title>session logs</title>
-<link rel="icon" href="https://adamnibosh.github.io/for-kasya-tersayang/favicon.svg" type="image/svg+xml">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css">
+<meta http-equiv="refresh" content="0;url=index.html">
+<title>redirecting…</title>
+<script>
+if (localStorage.getItem('kasya_admin_auth') === '1') {
+  location.replace('index.html');
+} else {
+  location.replace('index.html');
+}
+</script>
 </head>
-<body>
-  <div class="admin-wrap">
-    <section id="adminDash" class="admin-dash">
-      <header class="admin-head">
-        <div>
-          <h1>kasya sessions</h1>
-          <p id="adminMeta">loading…</p>
-        </div>
-        <div class="admin-actions">
-          <button type="button" id="adminRefresh">refresh</button>
-          <a class="btn-back" href="index.html">← site</a>
-        </div>
-      </header>
-      <div id="adminSessions" class="admin-sessions"></div>
-    </section>
-  </div>
-  <script src="analytics-config.js"></script>
-  <script src="admin.js"></script>
-</body>
+<body></body>
 </html>

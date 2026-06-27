@@ -916,6 +916,77 @@ button {
   }
 }
 
+/* ============================================
+   ADMIN LOGS (inside app — 0909 once)
+   ============================================ */
+#screen-admin {
+  justify-content: flex-start;
+  text-align: left;
+  align-items: stretch;
+}
+.admin-logs-link {
+  margin-top: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sky-deep);
+  opacity: 0.55;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.admin-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+.admin-head .title { font-size: 22px; margin: 0; text-align: left; }
+.admin-meta { font-size: 13px; color: var(--brown-soft); margin-top: 4px; }
+.admin-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+.btn-admin-sm {
+  padding: 8px 14px !important;
+  min-height: 0 !important;
+  font-size: 12px !important;
+}
+.admin-sessions { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+.admin-session-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-card);
+}
+.admin-session-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--brown-soft);
+}
+.admin-session-loc {
+  font-weight: 700;
+  color: var(--sky-deep);
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+.admin-event {
+  border-left: 3px solid var(--pink-deep);
+  padding: 6px 0 6px 10px;
+  margin: 6px 0;
+  font-size: 13px;
+}
+.admin-event strong { color: var(--brown); }
+.admin-event span { color: var(--brown-soft); font-size: 12px; display: block; margin-top: 2px; }
+.admin-empty {
+  text-align: center;
+  color: var(--brown-soft);
+  padding: 36px 12px;
+  font-size: 14px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .screen,
   .mem-slide.active-slide,
