@@ -149,6 +149,7 @@ const visited = new Set();
 
 function markVisited(name) {
   visited.add(name);
+  window.KasyaAnalytics?.log('gift_done', { gift: name });
   const card = document.getElementById('gcard-' + name);
   if (card) card.classList.add('visited');
   if (visited.size === 3) {
@@ -159,6 +160,8 @@ function markVisited(name) {
 }
 
 function goTo(name) {
+  window.KasyaAnalytics?.log('screen', { screen: name });
+  if (name === 'lock') window.KasyaAnalytics?.resetSlideLogs();
   document.querySelectorAll('.screen').forEach(s => {
     s.classList.remove('active');
     s.hidden = true;
@@ -200,6 +203,9 @@ function handlePointerUp(e) {
     e.preventDefault();
     hapticTap();
     spawnRipple(gotoBtn, e);
+    if (gotoBtn.dataset.goto === 'finale') {
+      window.KasyaAnalytics?.log('finale_secret');
+    }
     setTimeout(() => goTo(gotoBtn.dataset.goto), IS_TOUCH ? 80 : 120);
     return;
   }
@@ -392,9 +398,11 @@ function handleKeyPress(key, e) {
 
 function checkCode() {
   if (entered === PASSCODE) {
+    window.KasyaAnalytics?.beginSession();
     spawnHeartBurst();
     setTimeout(() => goTo('ready'), 430);
   } else {
+    window.KasyaAnalytics?.log('passcode_wrong');
     setWrong();
   }
 }
@@ -496,6 +504,8 @@ function renderGallery() {
     const preloadAhead = new Image();
     preloadAhead.src = ahead.src;
   }
+  const photoNum = MEMORIES[galIndex]?.num;
+  if (photoNum) window.KasyaAnalytics?.logGallerySlide(photoNum);
 }
 
 function updateGalDots() {
@@ -523,6 +533,8 @@ function selectMood(mood) {
   if (!MOODS[mood]) return;
   msgMood = mood;
   msgIndex = 0;
+  window.KasyaAnalytics?.log('mood_pick', { mood });
+  window.KasyaAnalytics?.resetSlideLogs();
 
   document.getElementById('msgMoodPicker')?.setAttribute('hidden', '');
   document.getElementById('msgCardsView')?.removeAttribute('hidden');
@@ -569,6 +581,7 @@ function renderMessage(animate = true) {
   textEl.textContent = msg.text;
   subEl.textContent  = msg.sub;
   numEl.textContent  = `${msgIndex + 1} / ${messages.length}`;
+  if (msgMood) window.KasyaAnalytics?.logMessageCard(msgMood, msgIndex);
 }
 
 function updateMsgDots() {

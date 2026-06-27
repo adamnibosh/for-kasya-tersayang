@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>session logs</title>
+<link rel="icon" href="https://adamnibosh.github.io/for-kasya-tersayang/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="admin-wrap">
+    <section id="adminLock" class="admin-lock">
+      <h1>session logs</h1>
+      <p class="sub">passcode only</p>
+      <input type="password" id="adminCode" inputmode="numeric" maxlength="8" placeholder="passcode" autocomplete="off">
+      <button type="button" id="adminUnlock">unlock</button>
+      <p class="err" id="adminErr" hidden>wrong passcode</p>
+    </section>
+
+    <section id="adminDash" class="admin-dash" hidden>
+      <header class="admin-head">
+        <div>
+          <h1>kasya sessions</h1>
+          <p id="adminMeta">loading…</p>
+        </div>
+        <button type="button" id="adminRefresh">refresh</button>
+      </header>
+      <div id="adminSessions" class="admin-sessions"></div>
+    </section>
+  </div>
+  <script src="analytics-config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
