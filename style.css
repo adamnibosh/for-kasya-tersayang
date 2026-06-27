@@ -924,17 +924,6 @@ button {
   text-align: left;
   align-items: stretch;
 }
-.admin-logs-link {
-  margin-top: 10px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--sky-deep);
-  opacity: 0.55;
-  background: none;
-  border: none;
-  text-decoration: underline;
-  cursor: pointer;
-}
 .admin-head {
   display: flex;
   justify-content: space-between;
