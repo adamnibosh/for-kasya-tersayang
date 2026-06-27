@@ -1,6 +1,6 @@
-﻿// Analytics â€” configured by setup-analytics.ps1
+// Analytics — configured for session logs
 const ANALYTICS_CONFIG = {
   enabled: true,
-  firebaseDatabaseUrl: 'https://console.firebase.google.com/u/0/project/for-kasya-tersayang/database/for-kasya-tersayang-default-rtdb/data/~2F',
+  firebaseDatabaseUrl: 'https://for-kasya-tersayang-default-rtdb.asia-southeast1.firebasedatabase.app',
   adminPasscode: '0909'
 };
