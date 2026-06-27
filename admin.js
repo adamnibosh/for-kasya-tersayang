@@ -1,10 +1,11 @@
 const CFG = typeof ANALYTICS_CONFIG !== 'undefined' ? ANALYTICS_CONFIG : {};
-const lockEl = document.getElementById('adminLock');
-const dashEl = document.getElementById('adminDash');
-const codeEl = document.getElementById('adminCode');
-const errEl = document.getElementById('adminErr');
+const AUTH_KEY = 'kasya_admin_auth';
 const sessionsEl = document.getElementById('adminSessions');
 const metaEl = document.getElementById('adminMeta');
+
+if (sessionStorage.getItem(AUTH_KEY) !== '1') {
+  window.location.replace('index.html');
+}
 
 const LABELS = {
   page_visit: 'opened site',
@@ -51,7 +52,7 @@ function fmtLoc(loc) {
 
 async function loadEvents() {
   const url = eventsUrl();
-  if (!url) throw new Error('Set firebaseDatabaseUrl in analytics-config.js');
+  if (!url) throw new Error('Firebase URL not set in analytics-config.js');
   const res = await fetch(`${url}?orderBy="$key"&limitToLast=400`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Could not load logs');
   const data = await res.json();
@@ -79,7 +80,7 @@ function groupBySession(events) {
 
 function renderSessions(groups) {
   if (!groups.length) {
-    sessionsEl.innerHTML = '<p class="empty">No sessions yet. Make sure analytics is enabled and Firebase URL is set.</p>';
+    sessionsEl.innerHTML = '<p class="empty">No sessions yet. Waiting for sayang to open the site with 1406.</p>';
     return;
   }
   sessionsEl.innerHTML = groups.map(g => {
@@ -118,17 +119,5 @@ async function refresh() {
   }
 }
 
-function unlock() {
-  if (codeEl.value === (CFG.adminPasscode || '0909')) {
-    errEl.hidden = true;
-    lockEl.hidden = true;
-    dashEl.hidden = false;
-    refresh();
-  } else {
-    errEl.hidden = false;
-  }
-}
-
-document.getElementById('adminUnlock')?.addEventListener('click', unlock);
-codeEl?.addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
 document.getElementById('adminRefresh')?.addEventListener('click', refresh);
+refresh();

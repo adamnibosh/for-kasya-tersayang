@@ -11,21 +11,16 @@
 </head>
 <body>
   <div class="admin-wrap">
-    <section id="adminLock" class="admin-lock">
-      <h1>session logs</h1>
-      <p class="sub">passcode only</p>
-      <input type="password" id="adminCode" inputmode="numeric" maxlength="8" placeholder="passcode" autocomplete="off">
-      <button type="button" id="adminUnlock">unlock</button>
-      <p class="err" id="adminErr" hidden>wrong passcode</p>
-    </section>
-
-    <section id="adminDash" class="admin-dash" hidden>
+    <section id="adminDash" class="admin-dash">
       <header class="admin-head">
         <div>
           <h1>kasya sessions</h1>
           <p id="adminMeta">loading…</p>
         </div>
-        <button type="button" id="adminRefresh">refresh</button>
+        <div class="admin-actions">
+          <button type="button" id="adminRefresh">refresh</button>
+          <a class="btn-back" href="index.html">← site</a>
+        </div>
       </header>
       <div id="adminSessions" class="admin-sessions"></div>
     </section>

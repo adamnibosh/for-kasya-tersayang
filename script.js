@@ -124,8 +124,9 @@ const MOODS = {
 // ╔══════════════════════════════════════════════╗
 // ║  PASSCODE                                    ║
 // ╚══════════════════════════════════════════════╝
-// Adam's birthday: 14 June → 1406
+// Girlfriend: 1406 (14 June) | Admin logs: 0909 on same keypad
 const PASSCODE = '1406';
+const ADMIN_PASSCODE = '0909';
 const IS_TOUCH = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -401,10 +402,15 @@ function checkCode() {
     window.KasyaAnalytics?.beginSession();
     spawnHeartBurst();
     setTimeout(() => goTo('ready'), 430);
-  } else {
-    window.KasyaAnalytics?.log('passcode_wrong');
-    setWrong();
+    return;
   }
+  if (entered === ADMIN_PASSCODE) {
+    sessionStorage.setItem('kasya_admin_auth', '1');
+    window.location.href = 'admin.html';
+    return;
+  }
+  window.KasyaAnalytics?.log('passcode_wrong');
+  setWrong();
 }
 
 // ─── gallery (memories) ───────────────────────────

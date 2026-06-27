@@ -22,8 +22,7 @@ $content = @"
 // Analytics — configured by setup-analytics.ps1
 const ANALYTICS_CONFIG = {
   enabled: true,
-  firebaseDatabaseUrl: '$url',
-  adminPasscode: '0909'
+  firebaseDatabaseUrl: '$url'
 };
 "@
 Set-Content -Path $configPath -Value $content -Encoding UTF8
@@ -36,5 +35,4 @@ git push origin main
 
 Write-Host "`nDONE. Admin logs:" -ForegroundColor Green
 Write-Host "https://adamnibosh.github.io/for-kasya-tersayang/admin.html" -ForegroundColor White
-Write-Host "Passcode: 0909`n" -ForegroundColor White
-Start-Process "https://adamnibosh.github.io/for-kasya-tersayang/admin.html"
+Write-Host "Enter 0909 on main site keypad to open logs`n" -ForegroundColor White
