@@ -15,9 +15,24 @@
     finale_secret: 'opened secret button'
   };
 
+  function dbBase() {
+    return CFG.firebaseDatabaseUrl ? CFG.firebaseDatabaseUrl.replace(/\/$/, '') : '';
+  }
+
   function eventsUrl() {
-    if (!CFG.firebaseDatabaseUrl) return '';
-    return `${CFG.firebaseDatabaseUrl.replace(/\/$/, '')}/events.json`;
+    const base = dbBase();
+    return base ? `${base}/events.json` : '';
+  }
+
+  async function deleteEvent(id) {
+    const base = dbBase();
+    if (!base) throw new Error('Firebase not configured');
+    const res = await fetch(`${base}/events/${id}.json`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Delete failed');
+  }
+
+  async function deleteSessionEvents(events) {
+    await Promise.all(events.map(ev => deleteEvent(ev.id)));
   }
 
   function fmtTime(iso) {
@@ -91,13 +106,17 @@
           <span>${fmtTime(ev.time)}</span>
         </div>
       `).join('');
+      const ids = g.events.map(ev => ev.id).join(',');
       return `
         <article class="admin-session-card">
           <div class="admin-session-top">
             <span>${startTime}</span>
             <span>${g.events.length} events</span>
           </div>
-          <p class="admin-session-loc">📍 ${fmtLoc(loc)}</p>
+          <div class="admin-session-bar">
+            <p class="admin-session-loc">📍 ${fmtLoc(loc)}</p>
+            <button type="button" class="btn-admin-delete" data-event-ids="${ids}">delete</button>
+          </div>
           ${eventsHtml}
         </article>
       `;
@@ -120,13 +139,46 @@
     }
   }
 
+  async function deleteAllEvents() {
+    const events = await loadEvents();
+    if (!events.length) return;
+    if (!confirm(`Delete all ${events.length} events? Cannot undo.`)) return;
+    await deleteSessionEvents(events);
+    await refresh();
+  }
+
   window.AdminPanel = {
     init() { refresh(); },
-    refresh
+    refresh,
+    deleteAll: deleteAllEvents
   };
 
   document.getElementById('adminRefresh')?.addEventListener('pointerup', e => {
     e.preventDefault();
     refresh();
+  });
+
+  document.getElementById('adminClearAll')?.addEventListener('pointerup', e => {
+    e.preventDefault();
+    deleteAllEvents();
+  });
+
+  document.getElementById('adminSessions')?.addEventListener('pointerup', async e => {
+    const btn = e.target.closest('[data-event-ids]');
+    if (!btn || btn.disabled) return;
+    e.preventDefault();
+    const ids = btn.dataset.eventIds.split(',').filter(Boolean);
+    if (!ids.length) return;
+    if (!confirm('Delete this session? Cannot undo.')) return;
+    btn.disabled = true;
+    btn.textContent = 'deleting…';
+    try {
+      await Promise.all(ids.map(id => deleteEvent(id)));
+      await refresh();
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'delete';
+      alert(err.message || 'Delete failed');
+    }
   });
 })();
