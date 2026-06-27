@@ -80,10 +80,44 @@
     });
   }
 
+  function formatLocation(loc) {
+    if (!loc) return 'Location unknown';
+    const parts = [loc.city, loc.region, loc.country].filter(Boolean);
+    return parts.length ? parts.join(', ') : 'Location unknown';
+  }
+
+  function notifyUnlock(loc) {
+    const topic = CFG.ntfyTopic;
+    if (!topic) return;
+    const when = new Date().toLocaleString('en-MY', {
+      timeZone: 'Asia/Kuala_Lumpur',
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    });
+    const place = formatLocation(loc);
+    const device = window.matchMedia('(hover: none) and (pointer: coarse)').matches
+      ? 'phone'
+      : 'desktop';
+    const body = `She entered 1406 at ${when}\n${place} · ${device}`;
+    try {
+      fetch(`https://ntfy.sh/${encodeURIComponent(topic)}`, {
+        method: 'POST',
+        headers: {
+          Title: 'Sayang opened the site 💛',
+          Tags: 'heart',
+          Priority: 'high'
+        },
+        body,
+        keepalive: true
+      }).catch(() => {});
+    } catch (_) {}
+  }
+
   async function beginSession() {
     if (!isReady()) return;
     sessionId = 'sess_' + uid();
     const loc = await fetchLocation();
+    notifyUnlock(loc);
     await send({
       type: 'session_start',
       detail: { unlocked: true },
