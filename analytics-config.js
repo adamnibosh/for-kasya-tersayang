@@ -1,13 +1,6 @@
-// ═══ ANALYTICS SETUP (one-time) ═══
-// 1. Go to https://console.firebase.google.com → Create project
-// 2. Build → Realtime Database → Create database (any region)
-// 3. Rules tab → paste:
-//    { "rules": { "events": { ".read": true, ".write": true } } } }
-// 4. Copy your Database URL (ends with .firebaseio.com or firebasedatabase.app)
-// 5. Paste below, set enabled: true, deploy
-
+﻿// Analytics â€” configured by setup-analytics.ps1
 const ANALYTICS_CONFIG = {
-  enabled: false,
-  firebaseDatabaseUrl: '',
+  enabled: true,
+  firebaseDatabaseUrl: 'https://console.firebase.google.com/u/0/project/for-kasya-tersayang/database/for-kasya-tersayang-default-rtdb/data/~2F',
   adminPasscode: '0909'
 };
