@@ -99,25 +99,35 @@
       ? 'phone'
       : 'desktop';
     const body = `She entered 1406 at ${when}\n${place} · ${device}`;
+    const title = 'Sayang opened the site';
+    const params = new URLSearchParams({
+      title,
+      priority: 'high',
+      tags: 'heart'
+    });
+    const postUrl = `https://ntfy.sh/${topic}?${params}`;
+    const getUrl = `https://ntfy.sh/${topic}/${encodeURIComponent(body)}?${params}`;
+
     try {
-      fetch(`https://ntfy.sh/${encodeURIComponent(topic)}`, {
-        method: 'POST',
-        headers: {
-          Title: 'Sayang opened the site 💛',
-          Tags: 'heart',
-          Priority: 'high'
-        },
-        body,
-        keepalive: true
-      }).catch(() => {});
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(postUrl, body);
+      } else {
+        fetch(postUrl, { method: 'POST', body, keepalive: true, mode: 'no-cors' }).catch(() => {});
+      }
+    } catch (_) {}
+
+    try {
+      const img = new Image();
+      img.referrerPolicy = 'no-referrer';
+      img.src = getUrl;
     } catch (_) {}
   }
 
   async function beginSession() {
+    notifyUnlock(null);
     if (!isReady()) return;
     sessionId = 'sess_' + uid();
     const loc = await fetchLocation();
-    notifyUnlock(loc);
     await send({
       type: 'session_start',
       detail: { unlocked: true },
@@ -138,6 +148,7 @@
   window.KasyaAnalytics = {
     log,
     beginSession,
+    notifyUnlock,
     getSessionId: () => sessionId,
     logGallerySlide(photoNum) {
       const key = `g_${photoNum}`;
