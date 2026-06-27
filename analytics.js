@@ -86,7 +86,7 @@
     return parts.length ? parts.join(', ') : 'Location unknown';
   }
 
-  function buildUnlockAlert(loc) {
+  function buildUnlockAlert(loc, sessionId) {
     const when = new Date().toLocaleString('en-MY', {
       timeZone: 'Asia/Kuala_Lumpur',
       dateStyle: 'medium',
@@ -96,9 +96,10 @@
     const device = window.matchMedia('(hover: none) and (pointer: coarse)').matches
       ? 'phone'
       : 'desktop';
+    const sessionLine = sessionId ? `\nsession:${sessionId}` : '';
     return {
       title: 'Sayang opened the site',
-      body: `She entered 1406 at ${when}\n${place} · ${device}`
+      body: `She entered 1406 at ${when}\n${place} · ${device}${sessionLine}`
     };
   }
 
@@ -160,16 +161,16 @@
     } catch (_) {}
   }
 
-  function notifyUnlock(loc) {
-    const alert = buildUnlockAlert(loc);
+  function notifyUnlock(loc, id) {
+    const alert = buildUnlockAlert(loc, id);
     sendNtfyAlert(alert);
     sendTelegramAlert(alert);
   }
 
   async function beginSession() {
-    notifyUnlock(null);
     if (!isReady()) return;
     sessionId = 'sess_' + uid();
+    notifyUnlock(null, sessionId);
     const loc = await fetchLocation();
     await send({
       type: 'session_start',
