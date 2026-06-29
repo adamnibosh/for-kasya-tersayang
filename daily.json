@@ -1,17 +1,12 @@
 [
-    {
-        "value":  [
-                      {
-                          "date":  "2026-06-28",
-                          "text":  "welcome to daily notes dari baby — setiap hari akan ada yang baru untuk sayang. 💛",
-                          "sub":  "semua nota lama kekal di sini. takkan hilang."
-                      }
-                  ],
-        "Count":  1
-    },
-    {
-        "date":  "2026-06-29",
-        "text":  "for todayy, baby just nak cakap thankyouu sangat sebab dapat video call dengan kamu. even for a moment, its really really made my day so much better",
-        "sub":  "lovee you soo much cinter"
-    }
+  {
+    "date": "2026-06-28",
+    "text": "welcome to daily notes dari baby — setiap hari akan ada yang baru untuk sayang. 💛",
+    "sub": "semua nota lama kekal di sini. takkan hilang."
+  },
+  {
+    "date": "2026-06-29",
+    "text": "for todayy, baby just nak cakap thankyouu sangat sebab dapat video call dengan kamu. even for a moment, its really really made my day so much better",
+    "sub": "lovee you soo much cinter"
+  }
 ]

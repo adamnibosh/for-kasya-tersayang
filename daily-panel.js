@@ -13,13 +13,29 @@
     }
   }
 
+  function normalizeNotes(data) {
+    if (!Array.isArray(data)) return [];
+    const out = [];
+    for (const item of data) {
+      if (!item || typeof item !== 'object') continue;
+      if (Array.isArray(item.value)) {
+        for (const nested of item.value) {
+          if (nested?.date && nested?.text) out.push(nested);
+        }
+        continue;
+      }
+      if (item.date && item.text) out.push(item);
+    }
+    return out;
+  }
+
   function render(notes) {
     const list = listEl();
     const count = countEl();
     const badge = badgeEl();
     if (!list) return;
 
-    const sorted = [...notes].reverse();
+    const sorted = [...normalizeNotes(notes)].reverse();
     if (count) count.textContent = `${notes.length} note${notes.length === 1 ? '' : 's'} dari baby`;
     if (badge) badge.textContent = String(notes.length);
 
@@ -54,7 +70,7 @@
       const res = await fetch(`daily.json?nocache=${Date.now()}`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Could not load daily notes');
       const data = await res.json();
-      render(Array.isArray(data) ? data : []);
+      render(normalizeNotes(data));
     } catch (e) {
       const list = listEl();
       if (list) list.innerHTML = `<p class="daily-empty">${e.message}</p>`;

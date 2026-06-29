@@ -1,6 +1,56 @@
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 
+function Read-DailyNotes {
+    param([string]$Path)
+    if (-not (Test-Path $Path)) { return @() }
+    $raw = Get-Content -Path $Path -Raw -Encoding UTF8
+    if (-not $raw.Trim()) { return @() }
+
+    $parsed = $raw | ConvertFrom-Json
+    $items = New-Object System.Collections.Generic.List[object]
+
+    function Add-Note($note) {
+        if (-not $note.date -or -not $note.text) { return }
+        $items.Add([pscustomobject]@{
+            date = [string]$note.date
+            text = [string]$note.text
+            sub  = if ($note.sub) { [string]$note.sub } else { $null }
+        })
+    }
+
+    if ($parsed -is [System.Array]) {
+        foreach ($item in $parsed) {
+            if ($null -eq $item) { continue }
+            if ($item.PSObject.Properties.Name -contains 'value') {
+                foreach ($nested in @($item.value)) { Add-Note $nested }
+            } else {
+                Add-Note $item
+            }
+        }
+    } else {
+        if ($parsed.PSObject.Properties.Name -contains 'value') {
+            foreach ($nested in @($parsed.value)) { Add-Note $nested }
+        } else {
+            Add-Note $parsed
+        }
+    }
+
+    return ,$items.ToArray()
+}
+
+function Write-DailyNotes {
+    param([string]$Path, [array]$Notes)
+    $rows = New-Object System.Collections.Generic.List[hashtable]
+    foreach ($n in $Notes) {
+        $row = [ordered]@{ date = $n.date; text = $n.text }
+        if ($n.sub) { $row.sub = $n.sub }
+        $rows.Add($row)
+    }
+    $json = ConvertTo-Json -InputObject @($rows.ToArray()) -Depth 4
+    [System.IO.File]::WriteAllText($Path, $json + "`n", [System.Text.UTF8Encoding]::new($false))
+}
+
 Write-Host ""
 Write-Host "=== Add daily note (append only - old notes stay) ===" -ForegroundColor Magenta
 Write-Host "Today: $(Get-Date -Format 'yyyy-MM-dd')" -ForegroundColor Cyan
@@ -17,22 +67,14 @@ $sub = Read-Host "Small sub-line (Enter to skip)"
 $sub = $sub.Trim()
 
 $jsonPath = Join-Path $PSScriptRoot "daily.json"
-$raw = Get-Content -Path $jsonPath -Raw -Encoding UTF8
-$notes = @()
-if ($raw.Trim()) {
-    $notes = @($raw | ConvertFrom-Json)
-}
+$notes = [System.Collections.Generic.List[object]](Read-DailyNotes -Path $jsonPath)
 
 $today = Get-Date -Format "yyyy-MM-dd"
-$entry = [ordered]@{ date = $today; text = $text }
-if ($sub) { $entry.sub = $sub }
+$entry = [pscustomobject]@{ date = $today; text = $text }
+if ($sub) { $entry | Add-Member -NotePropertyName sub -NotePropertyValue $sub }
+$notes.Add($entry)
 
-$notes += [pscustomobject]$entry
-$json = $notes | ConvertTo-Json -Depth 4
-if ($notes.Count -eq 1) {
-    $json = "[$json]"
-}
-[System.IO.File]::WriteAllText($jsonPath, $json + "`n", [System.Text.UTF8Encoding]::new($false))
+Write-DailyNotes -Path $jsonPath -Notes $notes.ToArray()
 
 Write-Host ""
 Write-Host "Added note for $today ($($notes.Count) total)" -ForegroundColor Green
