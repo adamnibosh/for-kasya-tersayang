@@ -1,119 +1,28 @@
 // ╔══════════════════════════════════════════════╗
-// ║  SWEET MESSAGES — edit per mood!           ║
-// ║  Say "rewind" → see messages-original.snapshot.js
+// ║  SWEET MESSAGES — moods.json (append daily)  ║
+// ║  Say "rewind" → messages-original.snapshot.js
 // ╚══════════════════════════════════════════════╝
-const MOODS = {
-  sad: {
-    label: 'sedih',
-    emoji: '😢',
-    cards: [
-      {
-        text: 'kalau sayang sedih, baby pun rasa sedih jugak. 🥺',
-        sub: "you don't have to carry it alone — i'm right here with you."
-      },
-      {
-        text: 'it\'s okay to not be okay today, sayang. 🤍',
-        sub: 'your feelings are valid. every single one of them.'
-      },
-      {
-        text: 'baby nak cakap — you matter sangat sangat to me. 💛',
-        sub: 'even on your quietest days, especially on those days.'
-      },
-      {
-        text: 'if worlds heavy sangat, kamu always ada bahuu baby untuk sandar 🫂',
-        sub: "i'm sorry for the times i made things heavier instead of lighter."
-      }
-    ]
-  },
-  happy: {
-    label: 'happy',
-    emoji: '😊',
-    cards: [
-      {
-        text: 'nampak sayang happy, baby pun happy gila! 😊',
-        sub: 'your smile is literally my favourite notification.'
-      },
-      {
-        text: 'keep shining sayang, you deserve every good thing. ✨',
-        sub: 'the world is so much brighter when you\'re in a good mood.'
-      },
-      {
-        text: 'baby suka sangat tengok you glowing macam ni. 💛',
-        sub: 'save this feeling — you earned every bit of it.'
-      },
-      {
-        text: 'your happiness is my happiness too, always. 🌸',
-        sub: 'thank you for letting me be part of the good days.'
-      }
-    ]
-  },
-  alone: {
-    label: 'alone',
-    emoji: '🫂',
-    cards: [
-      {
-        text: 'kamu tak pernah alone pun, i akan sentiasa ada dalam hati kamu 🤍',
-        sub: 'i love you every seconds time is ticking'
-      },
-      {
-        text: 'baby faham sometimes you just need space. 🌙',
-        sub: 'but just know — my heart is still on your side, always.'
-      },
-      {
-        text: 'jauh ke dekat ke, sayang still dalam hati baby. 💛',
-        sub: 'distance doesn\'t change how much you mean to me.'
-      },
-      {
-        text: 'kalau rasa sunyi, close your eyes — i\'m there. 🫂',
-        sub: 'you\'ve never been someone i forget. not even for a second.'
-      }
-    ]
-  },
-  angry: {
-    label: 'marah',
-    emoji: '😤',
-    cards: [
-      {
-        text: 'it\'s okay to be angry sayang. baby faham. 🤍',
-        sub: 'you don\'t have to pretend you\'re fine for my sake.'
-      },
-      {
-        text: 'kalau sayang marah baby, muhammad minta maaf sangat 🥺',
-        sub: 'you had every right to feel that way. no excuses from me.'
-      },
-      {
-        text: 'take your time. baby akan tunggu, no pressure. 🌸',
-        sub: 'i\'d rather you be honest than polite with me.'
-      },
-      {
-        text: 'even when you\'re upset, i still choose you. 💛',
-        sub: 'not because it\'s easy — because you\'re worth it, sayang.'
-      }
-    ]
-  },
-  rindu: {
-    label: 'rindu',
-    emoji: '💭',
-    cards: [
-      {
-        text: 'muhammad rindu kamu setiap hari, jam, minit and even setiap saat sayang 💛',
-        sub: 'jarak maybe kita jauh tapi hati kitaa sentiasa dekatt kann'
-      },
-      {
-        text: 'ldr memang susah sayang, tapi you worth every single mile. 🌙',
-        sub: "i'd choose you again — even with the distance."
-      },
-      {
-        text: 'setiap malam before tidur, baby ingat muka kamu. 🤍',
-        sub: "that's my favourite part of the day — thinking of you."
-      },
-      {
-        text: 'one day kita akan berjumpa juga oke sayang, sabarr tauuu 🫂',
-        sub: 'this distance is temporary. us is not.'
-      }
-    ]
+let MOODS = {};
+let moodsLoaded = null;
+
+function loadMoods() {
+  if (!moodsLoaded) {
+    moodsLoaded = fetch(`moods.json?nocache=${Date.now()}`, { cache: 'no-store' })
+      .then(res => {
+        if (!res.ok) throw new Error('Could not load moods');
+        return res.json();
+      })
+      .then(data => {
+        MOODS = data || {};
+        return MOODS;
+      })
+      .catch(err => {
+        moodsLoaded = null;
+        throw err;
+      });
   }
-};
+  return moodsLoaded;
+}
 
 // ╔══════════════════════════════════════════════╗
 // ║  MEMORY CAPTIONS — edit these to match yours ║
@@ -193,7 +102,10 @@ function goTo(name) {
   if (name === 'messages') initMessages();
   if (name === 'daily') window.DailyPanel?.init();
   if (name === 'finale') startHeartRain();
-  if (name === 'gift') window.DailyPanel?.refresh();
+  if (name === 'gift') {
+    window.DailyPanel?.refresh();
+    void loadMoods();
+  }
   if (name === 'admin') window.AdminPanel?.init();
   if (GIFT_SCREENS.has(name)) burstConfetti();
 }
@@ -541,8 +453,20 @@ function updateGalDots() {
 let msgMood = null;
 let msgIndex = 0;
 
+function sortMoodCards(cards) {
+  const dated = cards.filter(c => c.date).sort((a, b) => b.date.localeCompare(a.date));
+  const base = cards.filter(c => !c.date);
+  return [...dated, ...base];
+}
+
+function getNewestMoodDate(cards) {
+  const dated = cards.filter(c => c.date).map(c => c.date);
+  return dated.length ? dated.sort().reverse()[0] : null;
+}
+
 function getActiveMessages() {
-  return msgMood ? MOODS[msgMood]?.cards ?? [] : [];
+  const cards = msgMood ? MOODS[msgMood]?.cards ?? [] : [];
+  return sortMoodCards(cards);
 }
 
 function showMoodPicker() {
@@ -552,7 +476,8 @@ function showMoodPicker() {
   document.getElementById('msgCardsView')?.setAttribute('hidden', '');
 }
 
-function selectMood(mood) {
+async function selectMood(mood) {
+  try { await loadMoods(); } catch { return; }
   if (!MOODS[mood]) return;
   msgMood = mood;
   msgIndex = 0;
@@ -582,7 +507,8 @@ function rebuildMsgDots() {
   });
 }
 
-function initMessages() {
+async function initMessages() {
+  try { await loadMoods(); } catch { /* picker still shows */ }
   showMoodPicker();
 }
 
@@ -602,8 +528,11 @@ function renderMessage(animate = true) {
 
   const msg = messages[msgIndex];
   textEl.textContent = msg.text;
-  subEl.textContent  = msg.sub;
+  subEl.textContent  = msg.sub || '';
   numEl.textContent  = `${msgIndex + 1} / ${messages.length}`;
+  const pill = document.getElementById('msgNewPill');
+  const newest = getNewestMoodDate(messages);
+  if (pill) pill.hidden = !(msg.date && msg.date === newest);
   if (msgMood) window.KasyaAnalytics?.logMessageCard(msgMood, msgIndex);
 }
 
