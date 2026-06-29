@@ -459,9 +459,12 @@ function sortMoodCards(cards) {
   return [...dated, ...base];
 }
 
-function getNewestMoodDate(cards) {
-  const dated = cards.filter(c => c.date).map(c => c.date);
-  return dated.length ? dated.sort().reverse()[0] : null;
+function todayMY() {
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kuala_Lumpur' });
+}
+
+function isNewMoodCard(msg, index) {
+  return index === 0 && !!msg?.date && msg.date === todayMY();
 }
 
 function getActiveMessages() {
@@ -531,8 +534,7 @@ function renderMessage(animate = true) {
   subEl.textContent  = msg.sub || '';
   numEl.textContent  = `${msgIndex + 1} / ${messages.length}`;
   const pill = document.getElementById('msgNewPill');
-  const newest = getNewestMoodDate(messages);
-  if (pill) pill.hidden = !(msg.date && msg.date === newest);
+  if (pill) pill.hidden = !isNewMoodCard(msg, msgIndex);
   if (msgMood) window.KasyaAnalytics?.logMessageCard(msgMood, msgIndex);
 }
 

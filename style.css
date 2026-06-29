@@ -623,6 +623,9 @@ button {
   font-weight: 800;
   letter-spacing: .04em;
 }
+.msg-new-pill[hidden] {
+  display: none !important;
+}
 .msg-number {
   position:absolute; top:12px; right:16px;
   font-size:11px; font-weight:700; color:var(--sky-deep);

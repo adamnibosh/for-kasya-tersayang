@@ -29,6 +29,10 @@
     return out;
   }
 
+  function todayMY() {
+    return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kuala_Lumpur' });
+  }
+
   function sortNotes(notes) {
     return [...notes].sort((a, b) => {
       if (a.date !== b.date) return a.date < b.date ? 1 : -1;
@@ -53,10 +57,10 @@
     }
 
     list.innerHTML = sorted.map((note, i) => {
-      const isNewest = i === 0;
+      const isNew = i === 0 && note.date === todayMY();
       return `
-        <article class="daily-card${isNewest ? ' daily-card-new' : ''}">
-          ${isNewest ? '<span class="daily-new-pill">new ✨</span>' : ''}
+        <article class="daily-card${isNew ? ' daily-card-new' : ''}">
+          ${isNew ? '<span class="daily-new-pill">new ✨</span>' : ''}
           <time class="daily-date">${fmtDate(note.date)}</time>
           <p class="daily-text">${escapeHtml(note.text || '')}</p>
           ${note.sub ? `<p class="daily-sub">${escapeHtml(note.sub)}</p>` : ''}
