@@ -2,27 +2,15 @@
 """Add a mood card — append only, validated, atomic write, then deploy."""
 from __future__ import annotations
 
-import subprocess
 import sys
 from datetime import date
 from pathlib import Path
 
+from deploy_lib import DeployError, deploy_files, sync_with_github
 from mood_lib import MOOD_MENU, MoodNotesError, append_mood_card, read_moods, write_moods
 
 ROOT = Path(__file__).resolve().parent
 JSON_PATH = ROOT / "moods.json"
-
-
-def run_git(args: list[str]) -> None:
-    result = subprocess.run(
-        ["git", *args],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != 0:
-        detail = (result.stderr or result.stdout or "").strip()
-        raise MoodNotesError(f"git {' '.join(args)} failed: {detail}")
 
 
 def repair_only() -> int:
@@ -59,6 +47,7 @@ def main() -> int:
     print()
 
     try:
+        sync_with_github(ROOT)
         mood = pick_mood()
         moods = read_moods(JSON_PATH)
         label = moods[mood]["label"]
@@ -77,15 +66,12 @@ def main() -> int:
         print(f"Added {label} card for {today} ({count} cards in this mood)")
         print("Validating before deploy...")
         read_moods(JSON_PATH)
-        print("Deploying to GitHub...")
-        run_git(["add", "moods.json"])
-        run_git(["commit", "-m", f"Mood card {mood} for {today}"])
-        run_git(["push", "origin", "main"])
+        deploy_files(ROOT, ["moods.json"], f"Mood card {mood} for {today}")
         print()
         print("DONE. Sayang will see it in ayat sweett on the site.")
         print()
         return 0
-    except MoodNotesError as exc:
+    except (MoodNotesError, DeployError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
     except KeyboardInterrupt:

@@ -2,27 +2,15 @@
 """Add a daily note — append only, validated, atomic write, then deploy."""
 from __future__ import annotations
 
-import subprocess
 import sys
 from datetime import date
 from pathlib import Path
 
 from daily_lib import DailyNotesError, append_note, read_notes, write_notes
+from deploy_lib import DeployError, deploy_files, sync_with_github
 
 ROOT = Path(__file__).resolve().parent
 JSON_PATH = ROOT / "daily.json"
-
-
-def run_git(args: list[str]) -> None:
-    result = subprocess.run(
-        ["git", *args],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != 0:
-        detail = (result.stderr or result.stdout or "").strip()
-        raise DailyNotesError(f"git {' '.join(args)} failed: {detail}")
 
 
 def repair_only() -> int:
@@ -47,6 +35,7 @@ def main() -> int:
     print()
 
     try:
+        sync_with_github(ROOT)
         text = input("Note for Kasya (main message): ").strip()
         if not text:
             print("Cancelled - no text entered.")
@@ -58,15 +47,12 @@ def main() -> int:
         print(f"Added note for {today} ({len(notes)} total)")
         print("Validating before deploy...")
         read_notes(JSON_PATH)
-        print("Deploying to GitHub...")
-        run_git(["add", "daily.json"])
-        run_git(["commit", "-m", f"Daily note for {today}"])
-        run_git(["push", "origin", "main"])
+        deploy_files(ROOT, ["daily.json"], f"Daily note for {today}")
         print()
         print("DONE. Sayang will see it in daily dari baby on the site.")
         print()
         return 0
-    except DailyNotesError as exc:
+    except (DailyNotesError, DeployError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
     except KeyboardInterrupt:
