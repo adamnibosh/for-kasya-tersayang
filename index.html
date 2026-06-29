@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://adamnibosh.github.io/for-kasya-tersayang/style.css?v=48">
+<link rel="stylesheet" href="https://adamnibosh.github.io/for-kasya-tersayang/style.css?v=49">
 </head>
 <body>
 
@@ -129,6 +129,18 @@
           <span class="gift-shine"></span>
         </button>
 
+        <button class="gift-card gift-wide" data-goto="daily" style="--i:3" id="gcard-daily">
+          <div class="gift-inner gift-inner-wide">
+            <span class="gift-big-emoji">📅</span>
+            <div>
+              <span class="gift-label">daily dari baby</span>
+              <span class="gift-sublabel">nota baru setiap hari — lama pun kekal <span class="daily-badge" id="dailyBadgeCount">1</span></span>
+            </div>
+          </div>
+          <span class="gift-badge">✓</span>
+          <span class="gift-shine"></span>
+        </button>
+
       </div>
       <div class="paws-deco">🐾 🐾</div>
 
@@ -231,6 +243,17 @@
 
       <button class="btn btn-done" data-done="messages">da habis baca 💬 ✓</button>
     </section>
+
+    <!-- ═══ SCREEN 4d: DAILY NOTES (append only) ═══ -->
+    <section class="screen" id="screen-daily" hidden>
+      <p class="eyebrow">setiap hari ada yang baru</p>
+      <h1 class="title">daily dari baby 📅</h1>
+      <p class="subtitle" id="dailyCount">loading notes…</p>
+      <p class="daily-hint">nota lama tak hilang — baby cuma tambah je 💛</p>
+      <div class="daily-list" id="dailyList"></div>
+      <button class="btn btn-done" data-done-daily="daily">okayy, babyy 💛 ✓</button>
+    </section>
+
     <section class="screen" id="screen-finale" hidden>
       <canvas class="rain-canvas" id="rainCanvas" aria-hidden="true"></canvas>
       <div class="finale-content">
@@ -272,7 +295,8 @@
 
 <script src="https://adamnibosh.github.io/for-kasya-tersayang/analytics-config.js?v=9"></script>
 <script src="https://adamnibosh.github.io/for-kasya-tersayang/analytics.js?v=6"></script>
+<script src="https://adamnibosh.github.io/for-kasya-tersayang/daily-panel.js?v=1"></script>
 <script src="https://adamnibosh.github.io/for-kasya-tersayang/admin-panel.js?v=2"></script>
-<script src="https://adamnibosh.github.io/for-kasya-tersayang/script.js?v=46"></script>
+<script src="https://adamnibosh.github.io/for-kasya-tersayang/script.js?v=48"></script>
 </body>
 </html>

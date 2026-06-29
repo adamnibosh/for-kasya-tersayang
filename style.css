@@ -998,6 +998,88 @@ button {
   font-size: 14px;
 }
 
+/* ─── daily notes (append only) ─── */
+.daily-hint {
+  text-align: center;
+  color: var(--brown-soft);
+  font-size: 13px;
+  margin: 6px 0 16px;
+}
+.daily-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: 4px;
+  border-radius: 999px;
+  background: var(--pink);
+  color: var(--brown);
+  font-size: 11px;
+  font-weight: 800;
+  vertical-align: middle;
+}
+.daily-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: min(52vh, 420px);
+  overflow-y: auto;
+  padding: 4px 2px 8px;
+  margin-bottom: 14px;
+  -webkit-overflow-scrolling: touch;
+}
+.daily-card {
+  position: relative;
+  background: var(--white);
+  border: 1.5px solid rgba(244,185,196,0.55);
+  border-radius: var(--radius-md);
+  padding: 16px 16px 14px;
+  box-shadow: var(--shadow-card);
+}
+.daily-card-new {
+  border-color: var(--pink-deep);
+  box-shadow: 0 12px 28px rgba(224,138,155,0.22);
+}
+.daily-new-pill {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--pink);
+  color: var(--brown);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+.daily-date {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--sky-deep);
+  margin-bottom: 8px;
+}
+.daily-text {
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--brown);
+  white-space: pre-wrap;
+}
+.daily-sub {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--brown-soft);
+  font-style: italic;
+  line-height: 1.45;
+}
+.daily-empty {
+  text-align: center;
+  color: var(--brown-soft);
+  padding: 28px 12px;
+  font-size: 14px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .screen,
   .mem-slide.active-slide,

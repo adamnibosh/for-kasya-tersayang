@@ -148,6 +148,11 @@ function pointerCoords(evt) {
 const GIFT_SCREENS = new Set(['letter', 'memories', 'messages']);
 const visited = new Set();
 
+function markDailyVisited() {
+  window.KasyaAnalytics?.log('gift_done', { gift: 'daily' });
+  document.getElementById('gcard-daily')?.classList.add('visited');
+}
+
 function markVisited(name) {
   visited.add(name);
   window.KasyaAnalytics?.log('gift_done', { gift: name });
@@ -186,7 +191,9 @@ function goTo(name) {
   }
   if (name === 'memories') initGallery();
   if (name === 'messages') initMessages();
+  if (name === 'daily') window.DailyPanel?.init();
   if (name === 'finale') startHeartRain();
+  if (name === 'gift') window.DailyPanel?.refresh();
   if (name === 'admin') window.AdminPanel?.init();
   if (GIFT_SCREENS.has(name)) burstConfetti();
 }
@@ -218,6 +225,16 @@ function handlePointerUp(e) {
     hapticTap();
     spawnRipple(doneBtn, e);
     markVisited(doneBtn.dataset.done);
+    setTimeout(() => goTo('gift'), IS_TOUCH ? 80 : 120);
+    return;
+  }
+
+  const doneDailyBtn = e.target.closest('[data-done-daily]');
+  if (doneDailyBtn) {
+    e.preventDefault();
+    hapticTap();
+    spawnRipple(doneDailyBtn, e);
+    markDailyVisited();
     setTimeout(() => goTo('gift'), IS_TOUCH ? 80 : 120);
     return;
   }
