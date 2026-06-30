@@ -67,12 +67,11 @@
         </article>
       `;
     }).join('');
-    updateDailyScroll(list, total);
+    updateDailyScroll(list);
   }
 
-  function updateDailyScroll(list, total) {
+  function updateDailyScroll(list) {
     const wrap = list?.parentElement;
-    const hint = document.getElementById('dailyScrollHint');
     if (!wrap || !list) return;
 
     const sync = () => {
@@ -81,7 +80,6 @@
       const atBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 4;
       wrap.classList.toggle('can-scroll-up', scrollable && !atTop);
       wrap.classList.toggle('can-scroll-down', scrollable && !atBottom);
-      if (hint) hint.hidden = !(scrollable && total > 1);
     };
 
     if (!list.dataset.scrollBound) {
