@@ -82,7 +82,11 @@
       const res = await fetch(`daily.json?nocache=${Date.now()}`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Could not load daily notes');
       const data = await res.json();
-      render(data);
+      const remote = await window.ContentLoader?.fetchDailyFromFirebase?.() || [];
+      const merged = window.ContentLoader?.mergeDailyLists
+        ? window.ContentLoader.mergeDailyLists(normalizeNotes(data), remote)
+        : normalizeNotes(data);
+      render(merged);
     } catch (e) {
       const list = listEl();
       if (list) list.innerHTML = `<p class="daily-empty">${e.message}</p>`;

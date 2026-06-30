@@ -12,8 +12,16 @@ function loadMoods() {
         if (!res.ok) throw new Error('Could not load moods');
         return res.json();
       })
-      .then(data => {
+      .then(async (data) => {
         MOODS = data || {};
+        const remote = await window.ContentLoader?.fetchAllMoodCardsFromFirebase?.() || [];
+        for (const entry of remote) {
+          if (!MOODS[entry.mood]?.cards) continue;
+          MOODS[entry.mood].cards = window.ContentLoader.mergeMoodCards(
+            MOODS[entry.mood].cards,
+            entry.cards
+          );
+        }
         return MOODS;
       })
       .catch(err => {

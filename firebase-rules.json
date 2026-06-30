@@ -3,6 +3,23 @@
     "events": {
       ".read": true,
       ".write": true
+    },
+    "content": {
+      ".read": true,
+      "daily": {
+        "$id": {
+          ".write": "!data.exists() && newData.hasChildren(['date','text']) && newData.child('date').val().matches(/^\\d{4}-\\d{2}-\\d{2}$/) && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 2000"
+        }
+      },
+      "moods": {
+        "$mood": {
+          "cards": {
+            "$id": {
+              ".write": "!data.exists() && ($mood === 'sad' || $mood === 'happy' || $mood === 'alone' || $mood === 'angry' || $mood === 'rindu') && newData.hasChildren(['date','text']) && newData.child('date').val().matches(/^\\d{4}-\\d{2}-\\d{2}$/) && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 2000"
+            }
+          }
+        }
+      }
     }
   }
 }
