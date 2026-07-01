@@ -7,7 +7,9 @@
     "daily_reactions": {
       ".read": true,
       "$date": {
-        ".write": "!data.exists() && newData.hasChildren(['emoji','label','date']) && newData.child('date').val() === $date && newData.child('emoji').isString() && newData.child('label').isString()"
+        "$visitorId": {
+          ".write": "!data.exists() && newData.hasChildren(['emoji','label','date','visitorId']) && newData.child('date').val() === $date && newData.child('visitorId').val() === $visitorId && newData.child('emoji').isString() && newData.child('label').isString()"
+        }
       }
     },
     "content": {

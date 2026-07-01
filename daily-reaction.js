@@ -15,6 +15,16 @@
     return window.ANALYTICS_CONFIG || null;
   }
 
+  function getVisitorId() {
+    return window.KasyaAnalytics?.getVisitorId?.()
+      || localStorage.getItem('kasya_visitor_id')
+      || 'unknown';
+  }
+
+  function deviceType() {
+    return window.matchMedia('(hover: none) and (pointer: coarse)').matches ? 'phone' : 'desktop';
+  }
+
   function todayMY() {
     return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kuala_Lumpur' });
   }
@@ -24,38 +34,47 @@
     return url ? url.replace(/\/$/, '') : '';
   }
 
-  function reactionUrl(date) {
-    return `${dbBase()}/daily_reactions/${date}.json`;
+  function reactionUrl(date, visitorId) {
+    const id = encodeURIComponent(visitorId);
+    return `${dbBase()}/daily_reactions/${date}/${id}.json`;
   }
 
-  function localKey(date) {
-    return STORAGE_PREFIX + date;
+  function localKey(date, visitorId) {
+    return `${STORAGE_PREFIX}${date}_${visitorId}`;
   }
 
-  function readLocal(date) {
+  function readLocal(date, visitorId) {
     try {
-      const raw = localStorage.getItem(localKey(date));
+      const raw = localStorage.getItem(localKey(date, visitorId));
       return raw ? JSON.parse(raw) : null;
     } catch {
       return null;
     }
   }
 
-  function saveLocal(date, data) {
+  function saveLocal(date, visitorId, data) {
     try {
-      localStorage.setItem(localKey(date), JSON.stringify(data));
+      localStorage.setItem(localKey(date, visitorId), JSON.stringify(data));
     } catch (_) {}
   }
 
-  async function fetchTodayReaction(date) {
+  function normalizeOne(data) {
+    if (!data || typeof data !== 'object' || !data.emoji) return null;
+    return data;
+  }
+
+  async function fetchMyReaction(date, visitorId) {
     const base = dbBase();
     if (!base) return null;
     try {
-      const res = await fetch(`${reactionUrl(date)}?nocache=${Date.now()}`, { cache: 'no-store' });
-      if (!res.ok) return null;
-      const data = await res.json();
-      if (!data || typeof data !== 'object' || !data.emoji) return null;
-      return data;
+      const res = await fetch(`${reactionUrl(date, visitorId)}?nocache=${Date.now()}`, { cache: 'no-store' });
+      if (res.ok) return normalizeOne(await res.json());
+
+      const legacy = await fetch(`${base}/daily_reactions/${date}.json?nocache=${Date.now()}`, { cache: 'no-store' });
+      if (!legacy.ok) return null;
+      const old = await legacy.json();
+      if (old?.visitorId === visitorId) return normalizeOne(old);
+      return null;
     } catch {
       return null;
     }
@@ -64,14 +83,15 @@
   function notifyAdam(reaction, date) {
     const cfg = getConfig();
     if (!cfg) return;
+    const who = reaction.device === 'phone' ? 'Sayang (phone)' : 'Visitor (desktop)';
     const when = new Date().toLocaleString('en-MY', {
       timeZone: 'Asia/Kuala_Lumpur',
       dateStyle: 'medium',
       timeStyle: 'short'
     });
     const alert = {
-      title: 'Kasya answered today',
-      body: `${reaction.emoji} ${reaction.label}\n${date} · ${when}`
+      title: reaction.device === 'phone' ? 'Kasya answered today' : 'Someone answered today',
+      body: `${who}: ${reaction.emoji} ${reaction.label}\n${date} · ${when}\nid: ${reaction.visitorId || '?'}`
     };
 
     if (cfg.ntfyTopic) {
@@ -126,12 +146,9 @@
 
   async function submitReaction(reaction) {
     const date = todayMY();
+    const visitorId = getVisitorId();
     const base = dbBase();
     if (!base) throw new Error('Could not save');
-
-    const visitorId = window.KasyaAnalytics?.getVisitorId?.()
-      || localStorage.getItem('kasya_visitor_id')
-      || 'unknown';
 
     const payload = {
       emoji: reaction.emoji,
@@ -139,10 +156,11 @@
       date,
       ts: Date.now(),
       time: new Date().toISOString(),
-      visitorId
+      visitorId,
+      device: deviceType()
     };
 
-    const res = await fetch(reactionUrl(date), {
+    const res = await fetch(reactionUrl(date, visitorId), {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -150,23 +168,28 @@
 
     if (res.status === 401) throw new Error('Firebase rules need update');
     if (!res.ok) {
-      const existing = await fetchTodayReaction(date);
+      const existing = await fetchMyReaction(date, visitorId);
       if (existing) return existing;
       throw new Error('Could not save reaction');
     }
 
-    saveLocal(date, payload);
-    window.KasyaAnalytics?.log?.('daily_reaction', { emoji: reaction.emoji, label: reaction.label });
-    notifyAdam(reaction, date);
+    saveLocal(date, visitorId, payload);
+    window.KasyaAnalytics?.log?.('daily_reaction', {
+      emoji: reaction.emoji,
+      label: reaction.label,
+      device: payload.device
+    });
+    notifyAdam(payload, date);
     return payload;
   }
 
   async function init() {
     const date = todayMY();
+    const visitorId = getVisitorId();
     buildPicker();
 
-    const local = readLocal(date);
-    const remote = await fetchTodayReaction(date);
+    const local = readLocal(date, visitorId);
+    const remote = await fetchMyReaction(date, visitorId);
     const existing = remote || local;
 
     if (existing?.emoji) {
@@ -202,5 +225,5 @@
     }
   });
 
-  window.DailyReaction = { init, fetchTodayReaction, todayMY };
+  window.DailyReaction = { init, fetchMyReaction, todayMY, getVisitorId };
 })();
