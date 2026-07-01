@@ -12,7 +12,8 @@
     mood_pick: 'picked mood',
     memory_slide: 'viewed photo',
     message_card: 'read sweet card',
-    finale_secret: 'opened secret button'
+    finale_secret: 'opened secret button',
+    daily_reaction: 'daily mood answer'
   };
 
   function dbBase() {
@@ -50,6 +51,7 @@
     if (ev.type === 'screen') return d.screen || '';
     if (ev.type === 'gift_done') return d.gift || '';
     if (ev.type === 'mood_pick') return d.mood || '';
+    if (ev.type === 'daily_reaction') return `${d.emoji || ''} ${d.label || ''}`.trim();
     if (ev.type === 'memory_slide') return `#${d.photo}`;
     if (ev.type === 'message_card') return `${d.mood} card ${d.card}`;
     return '';
