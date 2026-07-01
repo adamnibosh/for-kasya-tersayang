@@ -46,7 +46,14 @@
   function readLocal(date, visitorId) {
     try {
       const raw = localStorage.getItem(localKey(date, visitorId));
-      return raw ? JSON.parse(raw) : null;
+      if (raw) return JSON.parse(raw);
+
+      const legacyRaw = localStorage.getItem(STORAGE_PREFIX + date);
+      if (!legacyRaw) return null;
+      const legacy = JSON.parse(legacyRaw);
+      if (!legacy?.emoji) return null;
+      saveLocal(date, visitorId, legacy);
+      return legacy;
     } catch {
       return null;
     }
@@ -73,7 +80,10 @@
       const legacy = await fetch(`${base}/daily_reactions/${date}.json?nocache=${Date.now()}`, { cache: 'no-store' });
       if (!legacy.ok) return null;
       const old = await legacy.json();
-      if (old?.visitorId === visitorId) return normalizeOne(old);
+      if (!old || typeof old !== 'object') return null;
+      if (old.visitorId === visitorId) return normalizeOne(old);
+      const mine = old[visitorId];
+      if (mine) return normalizeOne(mine);
       return null;
     } catch {
       return null;
@@ -166,10 +176,10 @@
       body: JSON.stringify(payload)
     });
 
-    if (res.status === 401) throw new Error('Firebase rules need update');
     if (!res.ok) {
       const existing = await fetchMyReaction(date, visitorId);
       if (existing) return existing;
+      if (res.status === 401) throw new Error('Firebase rules need update');
       throw new Error('Could not save reaction');
     }
 
