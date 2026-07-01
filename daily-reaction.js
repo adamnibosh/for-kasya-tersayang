@@ -9,6 +9,7 @@
   ];
 
   const STORAGE_PREFIX = 'kasya_daily_reaction_';
+  let ready = false;
 
   function getConfig() {
     if (typeof ANALYTICS_CONFIG !== 'undefined') return ANALYTICS_CONFIG;
@@ -16,9 +17,15 @@
   }
 
   function getVisitorId() {
-    return window.KasyaAnalytics?.getVisitorId?.()
-      || localStorage.getItem('kasya_visitor_id')
-      || 'unknown';
+    if (window.KasyaAnalytics?.getVisitorId) {
+      return window.KasyaAnalytics.getVisitorId();
+    }
+    let id = localStorage.getItem('kasya_visitor_id');
+    if (!id) {
+      id = 'v_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      try { localStorage.setItem('kasya_visitor_id', id); } catch (_) {}
+    }
+    return id;
   }
 
   function deviceType() {
@@ -75,16 +82,17 @@
     if (!base) return null;
     try {
       const res = await fetch(`${reactionUrl(date, visitorId)}?nocache=${Date.now()}`, { cache: 'no-store' });
-      if (res.ok) return normalizeOne(await res.json());
+      if (res.ok) {
+        const mine = normalizeOne(await res.json());
+        if (mine) return mine;
+      }
 
       const legacy = await fetch(`${base}/daily_reactions/${date}.json?nocache=${Date.now()}`, { cache: 'no-store' });
       if (!legacy.ok) return null;
       const old = await legacy.json();
       if (!old || typeof old !== 'object') return null;
       if (old.visitorId === visitorId) return normalizeOne(old);
-      const mine = old[visitorId];
-      if (mine) return normalizeOne(mine);
-      return null;
+      return normalizeOne(old[visitorId]);
     } catch {
       return null;
     }
@@ -124,22 +132,41 @@
     }
   }
 
-  function showLocked(reaction) {
+  function showLocked(reaction, note) {
     const row = document.getElementById('dailyEmojiRow');
     const done = document.getElementById('dailyQuestionDone');
     const picked = document.getElementById('dailyPickedEmoji');
-    if (row) row.hidden = true;
+    const err = document.getElementById('dailyReactionError');
+    if (row) {
+      row.hidden = true;
+      row.querySelectorAll('.daily-emoji-btn').forEach((b) => { b.disabled = true; });
+    }
     if (done) done.hidden = false;
     if (picked) {
       picked.textContent = `${reaction.emoji} ${reaction.label}`;
+    }
+    if (err) {
+      err.textContent = note || '';
+      err.hidden = !note;
     }
   }
 
   function showPicker() {
     const row = document.getElementById('dailyEmojiRow');
     const done = document.getElementById('dailyQuestionDone');
-    if (row) row.hidden = false;
+    const err = document.getElementById('dailyReactionError');
+    if (row) {
+      row.hidden = false;
+      row.querySelectorAll('.daily-emoji-btn').forEach((b) => { b.disabled = false; });
+    }
     if (done) done.hidden = true;
+    if (err) err.hidden = true;
+  }
+
+  function setPickerLoading(loading) {
+    const row = document.getElementById('dailyEmojiRow');
+    if (!row) return;
+    row.querySelectorAll('.daily-emoji-btn').forEach((b) => { b.disabled = loading; });
   }
 
   function buildPicker() {
@@ -178,7 +205,10 @@
 
     if (!res.ok) {
       const existing = await fetchMyReaction(date, visitorId);
-      if (existing) return existing;
+      if (existing) {
+        existing._lockedNote = `already picked ${existing.emoji} ${existing.label} today — cannot change 💛`;
+        return existing;
+      }
       if (res.status === 401) throw new Error('Firebase rules need update');
       throw new Error('Could not save reaction');
     }
@@ -194,25 +224,30 @@
   }
 
   async function init() {
+    ready = false;
     const date = todayMY();
     const visitorId = getVisitorId();
     buildPicker();
+    setPickerLoading(true);
 
-    const local = readLocal(date, visitorId);
     const remote = await fetchMyReaction(date, visitorId);
+    const local = readLocal(date, visitorId);
     const existing = remote || local;
 
     if (existing?.emoji) {
+      if (remote) saveLocal(date, visitorId, remote);
       showLocked(existing);
+      ready = true;
       return;
     }
 
     showPicker();
+    ready = true;
   }
 
   document.addEventListener('click', async (e) => {
     const btn = e.target.closest('[data-reaction-idx]');
-    if (!btn || btn.disabled) return;
+    if (!btn || btn.disabled || !ready) return;
 
     const idx = Number(btn.dataset.reactionIdx);
     const reaction = REACTIONS[idx];
@@ -224,7 +259,7 @@
 
     try {
       const saved = await submitReaction(reaction);
-      showLocked(saved);
+      showLocked(saved, saved._lockedNote || '');
     } catch (err) {
       row?.querySelectorAll('.daily-emoji-btn').forEach((b) => { b.disabled = false; });
       const msg = document.getElementById('dailyReactionError');
