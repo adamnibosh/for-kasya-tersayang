@@ -194,6 +194,7 @@
     beginSession,
     notifyUnlock,
     getSessionId: () => sessionId,
+    getVisitorId,
     logGallerySlide(photoNum) {
       const key = `g_${photoNum}`;
       if (lastGalleryLog === key) return;

@@ -108,7 +108,10 @@ function goTo(name) {
   }
   if (name === 'memories') initGallery();
   if (name === 'messages') initMessages();
-  if (name === 'daily') window.DailyPanel?.init();
+  if (name === 'daily') {
+    window.DailyPanel?.init();
+    window.DailyReaction?.init();
+  }
   if (name === 'finale') startHeartRain();
   if (name === 'gift') {
     window.DailyPanel?.refresh();

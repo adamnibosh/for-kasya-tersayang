@@ -1050,6 +1050,80 @@ button {
   font-size: 13px;
   margin: 4px 0 12px;
 }
+.daily-question {
+  width: 100%;
+  margin: 0 0 14px;
+  padding: 14px 12px;
+  background: var(--white);
+  border: 1.5px solid rgba(169, 214, 232, 0.55);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+.daily-question-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--brown);
+  margin-bottom: 4px;
+}
+.daily-question-sub {
+  font-size: 12px;
+  color: var(--brown-soft);
+  margin-bottom: 12px;
+}
+.daily-emoji-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.daily-emoji-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, #fff 0%, #fff8fb 100%);
+  border: 1.5px solid rgba(244, 185, 196, 0.45);
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+.daily-emoji-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--pink-deep);
+}
+.daily-emoji-btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+.daily-emoji-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.daily-emoji-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+.daily-emoji-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--brown-soft);
+  text-transform: capitalize;
+}
+.daily-question-done {
+  font-size: 14px;
+  color: var(--sky-deep);
+  font-weight: 600;
+  padding: 8px 4px 2px;
+}
+.daily-question-done strong {
+  color: var(--pink-deep);
+  font-weight: 700;
+}
+.daily-reaction-error {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--pink-deep);
+  font-weight: 700;
+}
 .daily-list-wrap {
   width: 100%;
   margin-bottom: 8px;
